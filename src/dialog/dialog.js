@@ -116,7 +116,7 @@ dialogModule.provider("$dialog", function(){
       }
 
       this._loadResolves().then(function(locals) {
-        var $scope = locals.$scope = self.$scope = locals.$scope ? locals.$scope : $rootScope.$new();
+        var $scope = locals.$scope = self.$scope = locals.$scope ? locals.$scope.$new() : $rootScope.$new();
 
         self.modalEl.html(locals.$template);
 
@@ -195,6 +195,8 @@ dialogModule.provider("$dialog", function(){
       this._unbindEvents();
 
       this.deferred.resolve(result);
+
+      this.$scope.$destroy();
     };
 
     Dialog.prototype._addElementsToDom = function(){

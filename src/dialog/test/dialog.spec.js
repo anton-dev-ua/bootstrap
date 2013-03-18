@@ -287,4 +287,80 @@ describe('Given ui.bootstrap.dialog', function(){
 			expect($document.find('body > div.modal > div.modal-header').length).toBe(1);
 		});
 	});
+
+  describe("When closing a dialog with its own scope", function () {
+
+    var scope;
+
+    function dialogController($scope) {
+      scope = $scope;
+    }
+
+    beforeEach(function () {
+      createDialog({template: template, controller: dialogController});
+      openDialog();
+      closeDialog();
+    });
+
+    it('should destroy the scope', function () {
+      expect(scope.$$destroyed).toBe(true);
+    });
+
+    describe('When opening it again', function () {
+      beforeEach(function () {
+        openDialog();
+      });
+
+      dialogShouldBeOpen();
+
+      it("should create new scope", function () {
+        expect(scope.$$destroyed).toBe(false);
+      });
+    });
+
+  });
+
+  describe("When closing a dialog with passed scope", function () {
+
+    var scope, resolveObj, extScope;
+
+    function dialogController($scope) {
+      scope = $scope;
+    }
+
+    beforeEach(function () {
+
+      extScope = $rootScope.$new();
+      extScope.extData = 'ext data';
+
+      resolveObj = {
+        $scope: function () {
+          return extScope;
+        }
+      };
+
+      createDialog({template: template, controller: dialogController, resolve: resolveObj});
+      openDialog();
+      closeDialog()
+    });
+
+    it('should create new scope', function () {
+      expect(scope).not.toBe(extScope);
+    });
+
+    it('should have access to data in external scope', function() {
+       expect(scope.extData).toBe('ext data');
+    });
+
+    it('should destroy internal scope', function () {
+      expect(scope.$$destroyed).toBe(true);
+    });
+
+    it('should not destroy external scope', function () {
+      expect(extScope.$$destroyed).toBe(false);
+    });
+
+
+  });
+
 });
