@@ -341,7 +341,7 @@ describe('Given ui.bootstrap.dialog', function(){
 
       createDialog({template: template, controller: dialogController, resolve: resolveObj});
       openDialog();
-      closeDialog()
+      closeDialog();
     });
 
     it('should create new scope', function () {
